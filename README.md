@@ -12,7 +12,6 @@ This web-app parses data from multiple resources: reddit, hackernews, etc. and r
 
 ------------
 
-**
-If you want to participate in development - feel free to create "New Issue" and we will discuss details**
+If you want to participate in development - feel free to create "New Issue" and we will discuss details
 
 
