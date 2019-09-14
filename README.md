@@ -5,7 +5,6 @@ This web-app parses data from multiple resources: reddit, hackernews, etc. and r
 ### Details
 - Framework: Flask
 - Front: Vue.js (cdn)
-- DB: sqlite for dev, postgres for prod
 ### Features
 - Choose the subreddit to parse from
 - Choose the sorting method
