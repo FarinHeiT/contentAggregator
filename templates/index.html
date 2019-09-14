@@ -22,13 +22,20 @@
 				<option value="rising">Rising</option>
 			</select>
 
-			<input v-on:click="getRedditData(subreddit=subreddit, sort=sort)" type="button" name="go" value="get" class="btn btn-primary form-control">
-			<ol>
-				<li v-for='item in redditResp'>
-					<a v-bind:href="[[ item.url ]]" target="_blank">[[ item.title ]]</a>
-					<i class="far fa-arrow-alt-circle-up"></i>[[ item.upvotes ]]
-				</li>
-			</ol>
+			<button v-on:click="getRedditData(subreddit=subreddit, sort=sort)" v-bind:class="{ disabled: buttonLoading }" name="go" id='go' class="btn btn-primary form-control">Update
+			  <span v-if="buttonLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></button>
+
+			<div class="row">
+				<div class="col-md-6">
+					<ol>
+						<li v-for='item in redditResp'>
+							<a v-bind:href="[[ item.url ]]" target="_blank" data-toggle="tooltip" data-placement="right" v-bind:title="[[ item.title ]]">[[ item.title.slice(0, 35) ]]...</a>
+							<i class="far fa-arrow-alt-circle-up"></i>[[ item.upvotes ]]
+							<i class="far fa-comments"></i>[[ item.num_comments ]]
+						</li>
+					</ol>
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
@@ -41,10 +48,13 @@
 		data: {
 			redditResp: null,
 			subreddit: 'AskReddit',
-			sort: 'hot'
+			sort: 'hot',
+			buttonLoading: false
 		},
 		methods:{
 			getRedditData: function (subreddit=this.subreddit, sort=this.sort) {
+				// Show loading spinner
+				this.buttonLoading = true
 				axios.get('/reddit.json', {
 					params: {
 						subreddit: subreddit,
@@ -53,15 +63,26 @@
 					})
 					.then(response => {
 						this.redditResp = response["data"]
+						// after the response - hide spinner
+						this.buttonLoading = false
 					})
 					.catch(error => {
 						alert(error)
 					})
 			},
 		},
+		// Get data on page load
 		created: function () {
 			this.getRedditData()
-		}
+		},
+	    // Activate tooltips
+	    updated: function () {
+	      this.$nextTick(function () {
+	        $(function () {
+	          $('[data-toggle="tooltip"]').tooltip({html: true})
+	        });
+	      })
+	    },
 	})
 </script>
 </html>
