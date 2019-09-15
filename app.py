@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request
-from parsers import redditParser
+from parsers import redditParser, hackerNewsParser
 
 app = Flask(__name__)
 
@@ -15,6 +15,11 @@ def reddit_json():
 	sort = request.args.get('sort')
 
 	return jsonify(redditParser.get_reddit_json(subreddit, sort))
+
+
+@app.route('/hacker.json')
+def hacker_json():
+	return jsonify(hackerNewsParser.get_hacker_json())
 
 
 
