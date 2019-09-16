@@ -1,0 +1,16 @@
+.b {
+	border-radius: 23px 23px 23px 23px;
+	-moz-border-radius: 23px 23px 23px 23px;
+	-webkit-border-radius: 23px 23px 23px 23px;
+	border: 2px solid #000000;
+	margin-top: 10px;
+}
+
+.icon {
+	width: 5%;
+}
+
+#redditSettings {
+	width: 60%;
+	cursor: pointer;
+}

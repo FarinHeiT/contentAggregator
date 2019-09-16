@@ -9,29 +9,56 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	<script src="https://kit.fontawesome.com/9a2812759d.js"></script>
-</head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head> 
 <body>
 	<div class="container">
 		<div id="app">
-			<input type="text" name="subreddit" v-model='subreddit' class="form-control">
-			<select name="sorting" id="sorting" v-model='sort' class="form-control">
-				<option value="hot">Hot</option>
-				<option value="top">Top</option>
-				<option value="new">New</option>
-				<option value="controversial">Controversial</option>
-				<option value="rising">Rising</option>
-			</select>
 
-			<button v-on:click="getRedditData(subreddit=subreddit, sort=sort)" v-bind:class="{ disabled: buttonLoading }" name="go" id='go' class="btn btn-primary form-control">Update
-			  <span v-if="buttonLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></button>
-
+			{# Reddit col #}
 			<div class="row">
-				<div class="col-md-6">
+				<div class="col-md-5 b">
+					<img class="icon" src="https://img.icons8.com/doodle/48/000000/reddit--v4.png" alt="">
+					<b>Reddit</b>
+
+					<!-- Dropdown with Reddit settings -->
+
+					<div class="btn-group">
+						<img src="https://img.icons8.com/cotton/64/000000/settings.png" id="redditSettings" class="dropdown-toggle" data-toggle="dropdown">
+					  <div class="dropdown-menu">
+					  	<input type="text" name="subreddit" v-model='subreddit' class="form-control">
+						<select name="sorting" id="sorting" v-model='sort' class="form-control">
+							<option value="hot">Hot</option>
+							<option value="top">Top</option>
+							<option value="new">New</option>
+							<option value="controversial">Controversial</option>
+							<option value="rising">Rising</option>
+						</select>
+						<button v-on:click="getRedditData(subreddit=subreddit, sort=sort)" v-bind:class="{ disabled: buttonLoading }" name="go" id='go' class="btn btn-primary form-control">Update
+						  <span v-if="buttonLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></button>
+					  </div>
+					</div>
+
 					<ol>
 						<li v-for='item in redditResp'>
-							<a v-bind:href="[[ item.url ]]" target="_blank" data-toggle="tooltip" data-placement="right" v-bind:title="[[ item.title ]]">[[ item.title.slice(0, 35) ]]...</a>
+							<img class="icon" src="https://img.icons8.com/doodle/48/000000/reddit--v4.png" alt="">
+							<a v-bind:href="[[ item.url ]]" target="_blank" data-toggle="tooltip" data-placement="right" v-bind:title="[[ item.title ]]">[[ item.title ]]</a><br>
 							<i class="far fa-arrow-alt-circle-up"></i>[[ item.upvotes ]]
 							<i class="far fa-comments"></i>[[ item.num_comments ]]
+						</li>
+					</ol>
+				</div>
+
+				{# HackerNews col #}
+				<div class=" offset-2 col-md-5 b">
+					<img class="icon" src="https://img.icons8.com/dusk/64/000000/hacker.png">
+					<b>HackerNews</b>
+					<ol>
+						<li v-for='item in hackerNewsResp'>
+							<img class="icon" src="https://img.icons8.com/dusk/64/000000/hacker.png">
+							<a v-bind:href="[[ item.url ]]" target="_blank" data-toggle="tooltip" data-placement="right" v-bind:title="[[ item.title ]]">[[ item.title ]]...</a><br>
+							
+							<i class="far fa-arrow-alt-circle-up"></i>[[ item.score ]]
 						</li>
 					</ol>
 				</div>
@@ -47,6 +74,7 @@
 		delimiters: ['[[',']]'],
 		data: {
 			redditResp: null,
+			hackerNewsResp: null,
 			subreddit: 'AskReddit',
 			sort: 'hot',
 			buttonLoading: false
@@ -70,17 +98,33 @@
 						alert(error)
 					})
 			},
+
+			getHackerData: function(){
+				axios.get('/hacker.json')
+					.then(response => {
+						this.hackerNewsResp = response['data'].slice(0, 25)
+					})
+					.catch(error => {
+						alert(error)
+					})
+
+			},
 		},
 		// Get data on page load
 		created: function () {
 			this.getRedditData()
+			this.getHackerData()
 		},
-	    // Activate tooltips
 	    updated: function () {
 	      this.$nextTick(function () {
+		    // Activate tooltips
 	        $(function () {
 	          $('[data-toggle="tooltip"]').tooltip({html: true})
 	        });
+	        // Fix dropdown closing when clicking on select
+			$('.dropdown-menu option, .dropdown-menu select').click(function(e) {
+			        e.stopPropagation();
+			});
 	      })
 	    },
 	})
