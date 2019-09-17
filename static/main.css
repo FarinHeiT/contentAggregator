@@ -14,3 +14,8 @@
 	width: 60%;
 	cursor: pointer;
 }
+
+#refreshTimer {
+	color: gray;
+	font-style: italic;
+}
